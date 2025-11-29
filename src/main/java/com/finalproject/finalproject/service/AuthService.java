@@ -52,16 +52,21 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponse login(LoginRequest request){
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+    public AuthResponse login(LoginRequest request) {
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid username or password");
+        }
 
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(()->new RuntimeException("User not found: " + request.getUsername()));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         String token = jwtUtil.generateToken(user);
 

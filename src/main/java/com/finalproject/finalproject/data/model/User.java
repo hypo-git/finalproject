@@ -38,6 +38,7 @@ public class User extends AuditableEntity implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Builder.Default
     private boolean enabled = true;
 
 
@@ -59,5 +60,9 @@ public class User extends AuditableEntity implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }
