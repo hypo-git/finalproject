@@ -3,7 +3,9 @@ package com.finalproject.finalproject.service;
 import com.finalproject.finalproject.data.dto.AuthResponse;
 import com.finalproject.finalproject.data.dto.LoginRequest;
 import com.finalproject.finalproject.data.dto.RegisterRequest;
+import com.finalproject.finalproject.data.dto.UserSettingDTO;
 import com.finalproject.finalproject.data.model.User;
+import com.finalproject.finalproject.data.model.UserSetting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
+
     @Transactional
     public AuthResponse register(RegisterRequest request){
         if (userRepository.existsByUsername(request.getUsername())){
@@ -37,10 +40,21 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .logoUsername(request.getUsername())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .enabled(true)
                 .build();
 
-        userRepository.save(user);
+        UserSetting userSetting = UserSetting.builder()
+                .user(user)
+                .colorScheme("light")
+                .fontSize("md")
+                .primaryColor("blue")
+                .build();
+
+        user.setSettings(userSetting);
+           userRepository.save(user);
         String token = jwtUtil.generateToken(user);
 
         return AuthResponse.builder()
@@ -49,6 +63,16 @@ public class AuthService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .logoUsername(user.getLogoUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .settings(
+                        UserSettingDTO.builder()
+                                .colorScheme(userSetting.getColorScheme())
+                                .fontSize(userSetting.getFontSize())
+                                .primaryColor(userSetting.getPrimaryColor())
+                                .build()
+                )
                 .build();
     }
 
@@ -67,7 +91,7 @@ public class AuthService {
 
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        UserSetting userSetting = user.getSettings();
         String token = jwtUtil.generateToken(user);
 
         return AuthResponse.builder()
@@ -76,6 +100,16 @@ public class AuthService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .logoUsername(user.getLogoUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .settings(
+                        UserSettingDTO.builder()
+                                .colorScheme(userSetting.getColorScheme())
+                                .fontSize(userSetting.getFontSize())
+                                .primaryColor(userSetting.getPrimaryColor())
+                                .build()
+                )
                 .build();
     }
 }

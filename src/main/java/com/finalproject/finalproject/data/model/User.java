@@ -2,10 +2,8 @@ package com.finalproject.finalproject.data.model;
 
 import com.finalproject.finalproject.data.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,16 +11,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Entity
-@Table(name = "users")
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Audited(withModifiedFlag = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = "settings")
+@Entity
+@Table(name = "users")
 public class User extends AuditableEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -41,6 +44,15 @@ public class User extends AuditableEntity implements UserDetails {
     @Builder.Default
     private boolean enabled = true;
 
+    private String logoUsername;
+
+    @Column(nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private UserSetting settings;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

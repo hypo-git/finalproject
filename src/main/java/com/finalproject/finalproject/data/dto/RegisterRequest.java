@@ -22,4 +22,12 @@ public class RegisterRequest {
     private String password;
 
     private Role role = Role.USER;
+
+    private String logoUserName;
+    @NotBlank(message = "Adı gerekli")
+    private String firstName;
+    @NotBlank(message = "Soyadı Gerekli")
+    private String lastName;
+
+
 }

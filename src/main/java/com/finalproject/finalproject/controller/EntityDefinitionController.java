@@ -2,6 +2,7 @@ package com.finalproject.finalproject.controller;
 
 import com.finalproject.finalproject.data.dto.EntityDefinitionDTOs.EntityDefinitionCreateDTO;
 import com.finalproject.finalproject.data.dto.EntityDefinitionDTOs.EntityDefinitionResponseDTO;
+import com.finalproject.finalproject.data.dto.EntityDefinitionDTOs.EntityDefinitionUpdateDTO;
 import com.finalproject.finalproject.data.dto.metadata.EntityDefinitionMetaDataDTO;
 import com.finalproject.finalproject.service.metadata.EntityDefinitionMetaDataService;
 import jakarta.validation.Valid;
@@ -20,10 +21,16 @@ public class EntityDefinitionController {
     private final EntityDefinitionService entityDefinitionService;
     private final EntityDefinitionMetaDataService entityDefinitionMetaDataService;
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public EntityDefinitionResponseDTO createEntity(@Valid @RequestBody EntityDefinitionCreateDTO dto){
         return entityDefinitionService.createEntityDefinition(dto);
+    }
+
+    @PutMapping("/update/{entityCode}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    public EntityDefinitionResponseDTO updateEntityByEntityCode(@PathVariable String entityCode, @Valid @RequestBody EntityDefinitionUpdateDTO dto){
+        return entityDefinitionService.updateEntityDefinition(dto);
     }
 
     @PutMapping("/deleteById/{id}")

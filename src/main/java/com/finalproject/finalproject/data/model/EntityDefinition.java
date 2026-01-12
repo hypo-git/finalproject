@@ -4,10 +4,12 @@ import com.finalproject.finalproject.data.enums.EntityType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 
 @Data
 @Entity
+@Audited(withModifiedFlag = true)
 @Table(name = "entity_definition")
 public class EntityDefinition extends AuditableEntity {
     @Id

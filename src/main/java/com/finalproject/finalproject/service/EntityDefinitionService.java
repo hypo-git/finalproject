@@ -42,18 +42,24 @@ public class EntityDefinitionService {
         EntityDefinition saved = repository.save(entityDefinition);
         return mapper.toResponseDTO(saved);
     }
-    //soft-delete by code
+
     public void deleteEntityDefinitionByCode(String entityCode){
         EntityDefinition entityDefinition = findByCodeOrThrow(entityCode);
-        entityDefinition.setLive(false);
-        repository.save(entityDefinition);
+        repository.delete(entityDefinition);
     }
-    //soft-delete by id
+
     public void deleteEntityDefinitionById(Long id){
         EntityDefinition entityDefinition = findByIdOrThrow(id);
-        entityDefinition.setLive(false);
-        repository.save(entityDefinition);
+        repository.delete(entityDefinition);
     }
+
+    //update
+    public EntityDefinitionResponseDTO updateEntityDefinition(EntityDefinitionUpdateDTO dto){
+        EntityDefinition entityDefinition = findByCodeOrThrow(dto.getEntityCode());
+        mapper.updateEntity(entityDefinition, dto);
+        return mapper.toResponseDTO(repository.save(entityDefinition));
+    }
+
 
     public EntityDefinitionResponseDTO findByEntityCode(String entityCode){
         if (!repository.existsByEntityCode(entityCode)){
